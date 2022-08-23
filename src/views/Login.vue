@@ -5,28 +5,43 @@
       <p v-if="errors" class="invalid">
         {{ errors }}
       </p>
-      <div class="flex">
+      <div>
         <label for="username" required>ID</label>
-        <a-input :class="[
+        <input
+          :class="[
             errors && errors.search('username') !== -1 ? 'error' : '',
             'form-control',
-          ]" name="username" v-model.lazy.trim="form.username" />
+          ]"
+          type="text"
+          name="username"
+          autofocus
+          id="username"
+          v-model="form.username"
+        />
       </div>
-      <div class="flex">
+      <div>
         <label for="password" required>Password</label>
-        <a-input :class="[
+        <input
+          :class="[
             errors && errors.search('password') !== -1 ? 'error' : '',
             'form-control',
-          ]" name="password" v-model.lazy.trim="form.password" />
+          ]"
+          type="password"
+          name="password"
+          id="password"
+          v-model="form.password"
+        />
       </div>
       <p v-if="errors && errors.error" class="invalid">
         {{ isSignup ? errors.error : "Invalid credentials" }}
       </p>
-       <a-button type="primary"> {{
+      <button class="primary" type="submit">
+        {{
            signinLoading
             ? "Login in.."
             : "Login"
-        }}</a-button>
+        }}
+      </button>
     </form>
   </div>
 </template>
@@ -43,7 +58,7 @@ export default {
     const store = useStore();
     const router = useRouter();
     const form = reactive({
-      email: "",
+      username: "",
       password: "",
       confirmpassword: "",
     });
@@ -53,6 +68,7 @@ export default {
     const submitForm = (e) => {
       e.preventDefault();
       signinData();
+      localStorage.setItem('username', form.username)
     };
 
 
@@ -64,12 +80,13 @@ export default {
       onError,
     } = useMutation(mutations.SIGN_IN, () => ({
       variables: {
-        email: form.email,
+        username: form.username,
         password: form.password,
       },
     }));
     signinDone((res) => {
-      store.commit("auth/setAuthData", res.data.signin);
+      console.log(res)
+      store.commit("auth/setAuthData", res.data.login.accessToken);
       router.push("/");
     });
     onError((error) => {
@@ -118,6 +135,12 @@ export default {
 }
 label {
   display: block;
+  text-align: left;
+}
+input {
+  width: 100%;
+  border: 1px solid #d9d9d9;
+  padding: 4px 11px;
 }
 .secondary {
   background-color: #ff0000;
@@ -131,11 +154,16 @@ label {
   color: red;
 }
 .primary {
-  background-color: #065806;
+  background-color: #1890ff;
   color: #ffffff;
+  border: none;
+  height: 32px;
+  padding: 4px 15px;
+  font-size: 14px;
+  cursor: pointer;
 }
 .primary:hover {
-  background-color: #45c545;
+  background-color: #40a9ff;
   color: #ffffff;
 }
 button:disabled {

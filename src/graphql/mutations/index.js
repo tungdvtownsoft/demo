@@ -66,11 +66,10 @@ const mutations = {
   `,
 
   SIGN_IN: gql`
-    mutation signin($email: String!, $password: String!) {
-      signin(email: $email, password: $password) {
-        email
-        token
-        id
+    mutation login($username: String!, $password: String!) {
+      login(username: $username, password: $password) {
+        accessToken
+        refreshToken
       }
     }
   `,
